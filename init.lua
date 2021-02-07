@@ -18,13 +18,13 @@ obj.assignedToYou = {}
 
 obj.iconPath = hs.spoons.resourcePath("icons")
 
-local comment_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#4C566A'}})
-local user_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#4C566A'}})
-local calendar_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#4C566A'}})
+local comment_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
+local user_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
+local calendar_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 
 
 local function styledText(text)
-    return hs.styledtext.new(text, {color = {hex = '#4C566A'}})
+    return hs.styledtext.new(text, {color = {hex = '#8e8e8e'}})
 end
 --- Converts string representation of date (2020-06-02T11:25:27Z) to date
 local function parse_date(date_str)
