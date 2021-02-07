@@ -1,0 +1,27 @@
+# GitLab 
+
+![screenshot2](./screenshots/screenshot.png)
+
+This menuabar app replicates GitLab's merge requests panel dropdown:
+
+![screenshot1](./screenshots/gitlab_mrs.png)
+
+and shows merge requests for you to review and assigned to you.
+
+# Installation
+
+ - download and install [Hammerspoon](https://github.com/Hammerspoon/hammerspoon/releases/latest)
+ - download and install [GitLab Spoon]()
+ - open ~/.hammerspoon/init.lua and add following snippet:
+
+```lua
+-- GitLab
+hs.loadSpoon("Gitlab")
+spoon.Gitlab:setup({
+    gitlab_host = 'https://gitlab.com',
+    token = '<your token>'
+})
+spoon.Gitlab:start()
+```
+
+To generate a token, go to: https://gitlab.com/-/profile/personal_access_tokens, select **api** scope and type a name.
