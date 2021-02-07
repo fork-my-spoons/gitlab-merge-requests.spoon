@@ -2,10 +2,10 @@ local obj = {}
 obj.__index = obj
 
 -- Metadata
-obj.name = "Gitlab"
+obj.name = "gitlab"
 obj.version = "1.0"
 obj.author = "Pavel Makhov"
-obj.homepage = "https://github.com/streetturtle/spoonify"
+obj.homepage = "https://github.com/fork-my-spoons/gitlab.spoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.indicator = nil
@@ -87,8 +87,7 @@ local function updateMenu()
         hs.http.asyncGet(obj.gitlab_host .. '/api/v4/merge_requests?state=opened', auth_header, function(status, body)
             obj.assignedToYou = {}
             local merge_requests = hs.json.decode(body)
-            -- obj.indicator:setTitle(#merge_requests + to_review)
-            obj.indicator:setTitle(5)
+            obj.indicator:setTitle(#merge_requests + to_review)
         
             for _, merge_request in ipairs(merge_requests) do
                 hs.http.asyncGet(obj.gitlab_host .. '/api/v4/projects/' .. merge_request.project_id .. '/merge_requests/' .. merge_request.iid ..'/approval_state', auth_header, function(code, body) 
@@ -117,82 +116,24 @@ function obj:buildMenu()
 
     table.insert(gitlab_menu, { title = 'Review requests for you', disabled = true })
 
-    table.insert(gitlab_menu, {
-        title = hs.styledtext.new('TMNT-43 new plan on how to defeat Shredder\n')
-            .. calendar_icon .. styledText('2 days ago   ')
-            .. comment_icon .. styledText('7  ')
-            .. user_icon .. 'Leonardo',
-        image = hs.image.imageFromPath('/Users/pmakhov/Pictures/leo.png'):setSize({w=32,h=32}),
-        checked = true
-    })
+    table.sort(obj.toReview, function(left, right) return left.created > right.created end)
+    for _,v in ipairs(obj.toReview) do 
+        table.insert(gitlab_menu, v)
+    end
 
-    table.insert(gitlab_menu, {
-        title = hs.styledtext.new('TMNT-55 Turtle Van version 2.0\n')
-            .. calendar_icon .. styledText('3 days ago   ')
-            .. comment_icon .. styledText('2   ')
-            .. user_icon .. 'Donatello',
-        image = hs.image.imageFromPath('/Users/pmakhov/Pictures/don.png'):setSize({w=32,h=32}),
-        checked = true
-    })
-   
-    table.insert(gitlab_menu, {
-        title = hs.styledtext.new('TMNT-53 article how to distinguish between Rocksteady and Bebop\n')
-            .. calendar_icon .. styledText('5 days ago   ')
-            .. comment_icon .. styledText('2   ')
-            .. user_icon .. 'Rafael',
-        image = hs.image.imageFromPath('/Users/pmakhov/Pictures/raf.png'):setSize({w=32,h=32}),
-        checked = true
-    })
-   
     table.insert(gitlab_menu, { title = '-'})
     table.insert(gitlab_menu, { title = 'Assigned to you', disabled = true })
     
-    table.insert(gitlab_menu, {
-        title = hs.styledtext.new('TMNT-23 improved pizza recipe\n')
-            .. calendar_icon .. styledText('2 days ago   ')
-            .. comment_icon .. styledText('4   ')
-            .. user_icon .. 'Michelangelo',
-        image = hs.image.imageFromPath('/Users/pmakhov/Pictures/mikey.png'):setSize({w=32,h=32}),
-        checked = true
-    })
-    table.insert(gitlab_menu, {
-        title = hs.styledtext.new('TMNT-32 new dance moves\n')
-            .. calendar_icon .. styledText('3 days ago   ')
-            .. comment_icon .. styledText('1   ')
-            .. user_icon .. 'Michelangelo',
-        image = hs.image.imageFromPath('/Users/pmakhov/Pictures/mikey.png'):setSize({w=32,h=32}),
-        checked = true
-    })
-
+    table.sort(obj.assignedToYou, function(left, right) return left.created > right.created end)
+    for _,v in ipairs(obj.assignedToYou) do 
+        table.insert(gitlab_menu, v)
+    end
+    
     table.insert(gitlab_menu, { title = '-'})
     table.insert(gitlab_menu, { title = 'Refresh', fn = function() updateMenu() end})
 
     return gitlab_menu
 end
-
--- function obj:buildMenu()
---     gitlab_menu = {}
-
---     table.insert(gitlab_menu, { title = 'Review requests for you', disabled = true })
-
---     table.sort(obj.toReview, function(left, right) return left.created > right.created end)
---     for _,v in ipairs(obj.toReview) do 
---         table.insert(gitlab_menu, v)
---     end
-
---     table.insert(gitlab_menu, { title = '-'})
---     table.insert(gitlab_menu, { title = 'Assigned to you', disabled = true })
-    
---     table.sort(obj.assignedToYou, function(left, right) return left.created > right.created end)
---     for _,v in ipairs(obj.assignedToYou) do 
---         table.insert(gitlab_menu, v)
---     end
-    
---     table.insert(gitlab_menu, { title = '-'})
---     table.insert(gitlab_menu, { title = 'Refresh', fn = function() updateMenu() end})
-
---     return gitlab_menu
--- end
 
 function obj:init()
     self.indicator = hs.menubar.new()

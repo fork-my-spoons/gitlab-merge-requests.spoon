@@ -25,3 +25,5 @@ spoon.Gitlab:start()
 ```
 
 To generate a token, go to: https://gitlab.com/-/profile/personal_access_tokens, select **api** scope and type a name.
+
+This app uses icons, to properly display them, install a [feather-font](https://github.com/AT-UI/feather-font) by [downloading](https://github.com/AT-UI/feather-font/raw/master/src/fonts/feather.ttf1) this .ttf font and installing it.
