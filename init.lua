@@ -21,11 +21,12 @@ obj.iconPath = hs.spoons.resourcePath("icons")
 local comment_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 local user_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 local calendar_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
-
+local warning_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#ffd60a'}})
 
 local function styledText(text)
     return hs.styledtext.new(text, {color = {hex = '#8e8e8e'}})
 end
+
 --- Converts string representation of date (2020-06-02T11:25:27Z) to date
 local function parse_date(date_str)
     local pattern = "(%d+)%-(%d+)%-(%d+)T(%d+):(%d+):(%d+)%Z"
@@ -70,12 +71,19 @@ local function updateMenu()
         for _, merge_request in ipairs(merge_requests) do
             hs.http.asyncGet(obj.gitlab_host .. '/api/v4/projects/' .. merge_request.project_id .. '/merge_requests/' .. merge_request.iid ..'/approval_state', auth_header, function(code, body) 
                 local approvals = hs.json.decode(body)
+
+                local title = hs.styledtext.new(merge_request.title .. '\n') 
+                        .. calendar_icon .. styledText(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
+                        .. comment_icon .. styledText(tostring(merge_request.user_notes_count) .. '   ')
+                        .. user_icon .. styledText(merge_request.author.name)
+
+                if merge_request.merge_status == 'cannot_be_merged' then
+                    title = warning_icon .. title
+                end
+
                 menu_item = { 
                     created = parse_date(merge_request.created_at),
-                    title = hs.styledtext.new(merge_request.title .. '\n') 
-                            .. calendar_icon .. styledText(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
-                            .. comment_icon .. styledText(tostring(merge_request.user_notes_count) .. '   ')
-                            .. user_icon .. styledText(merge_request.author.name),
+                    title = title,
                     image = hs.image.imageFromURL(merge_request.author.avatar_url):setSize({w=32,h=32}),
                     checked = #approvals.rules[1].approved_by >= approvals.rules[1].approvals_required,
                     fn = function() os.execute('open ' .. merge_request.web_url) end
@@ -92,12 +100,19 @@ local function updateMenu()
             for _, merge_request in ipairs(merge_requests) do
                 hs.http.asyncGet(obj.gitlab_host .. '/api/v4/projects/' .. merge_request.project_id .. '/merge_requests/' .. merge_request.iid ..'/approval_state', auth_header, function(code, body) 
                     local approvals = hs.json.decode(body)
+
+                    local title = hs.styledtext.new(merge_request.title .. '\n') 
+                        .. calendar_icon .. styledText(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
+                        .. comment_icon .. styledText(tostring(merge_request.user_notes_count) .. '   ')
+                        .. user_icon .. styledText(merge_request.author.name)
+
+                    if merge_request.merge_status == 'cannot_be_merged' then
+                        title = warning_icon .. title
+                    end
+
                     local menu_item = {
                         created = parse_date(merge_request.created_at),
-                        title = hs.styledtext.new(merge_request.title .. '\n') 
-                            .. calendar_icon .. styledText(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
-                            .. comment_icon .. styledText(tostring(merge_request.user_notes_count) .. '   ')
-                            .. user_icon .. styledText(merge_request.author.name),
+                        title = title,
                         image = hs.image.imageFromURL(merge_request.author.avatar_url):setSize({w=32,h=32}),
                         checked = #approvals.rules[1].approved_by >= approvals.rules[1].approvals_required,
                         fn = function() os.execute('open ' .. merge_request.web_url) end
