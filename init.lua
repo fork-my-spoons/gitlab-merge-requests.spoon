@@ -11,7 +11,7 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.indicator = nil
 obj.timer = nil
 obj.gitlab_host = nil
-obj.path = 'state=opened&scope=all&reviewer_username=pmakhov360'
+obj.path = 'state=opened&scope=all'
 obj.token = nil
 obj.toReview = {}
 obj.assignedToYou = {}
