@@ -129,22 +129,28 @@ end
 function obj:buildMenu()
     gitlab_menu = {}
 
-    table.insert(gitlab_menu, { title = 'Review requests for you', disabled = true })
+    if #obj.toReview > 0 then
+        table.insert(gitlab_menu, { title = 'Review requests for you', disabled = true })
 
-    table.sort(obj.toReview, function(left, right) return left.created > right.created end)
-    for _,v in ipairs(obj.toReview) do 
-        table.insert(gitlab_menu, v)
+        table.sort(obj.toReview, function(left, right) return left.created > right.created end)
+        for _,v in ipairs(obj.toReview) do 
+            table.insert(gitlab_menu, v)
+        end
+
+        table.insert(gitlab_menu, { title = '-'})
     end
 
-    table.insert(gitlab_menu, { title = '-'})
-    table.insert(gitlab_menu, { title = 'Assigned to you', disabled = true })
-    
-    table.sort(obj.assignedToYou, function(left, right) return left.created > right.created end)
-    for _,v in ipairs(obj.assignedToYou) do 
-        table.insert(gitlab_menu, v)
+    if #obj.assignedToYou > 0 then
+        table.insert(gitlab_menu, { title = 'Assigned to you', disabled = true })
+        
+        table.sort(obj.assignedToYou, function(left, right) return left.created > right.created end)
+        for _,v in ipairs(obj.assignedToYou) do 
+            table.insert(gitlab_menu, v)
+        end
+        
+        table.insert(gitlab_menu, { title = '-'})
     end
-    
-    table.insert(gitlab_menu, { title = '-'})
+
     table.insert(gitlab_menu, { title = 'Refresh', fn = function() updateMenu() end})
 
     return gitlab_menu
@@ -152,7 +158,7 @@ end
 
 function obj:init()
     self.indicator = hs.menubar.new()
-    self.indicator:setIcon(hs.image.imageFromPath(obj.iconPath .. '/gitlab-icon-rgb.png'):setSize({w=16,h=16}), false)
+    self.indicator:setIcon(hs.image.imageFromPath(obj.iconPath .. '/gitlab-icon-rgb.png'):setSize({w=16,h=16}), true)
     self.timer = hs.timer.new(600, updateMenu)
     obj.indicator:setMenu(self.buildMenu)
 
