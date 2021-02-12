@@ -13,7 +13,7 @@ jobs:
         with:
           files: dist/ manifest.json
           dest: result.zip
-      - uses: actions/upload-artifact@v1
+      - name: Push changes
+        uses: ad-m/github-push-action@master
         with:
-          name: my-artifact
-          path: ${{ github.workspace }}/result.zip
+          github_token: ${{ secrets.GITHUB_TOKEN }}
