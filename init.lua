@@ -2,10 +2,10 @@ local obj = {}
 obj.__index = obj
 
 -- Metadata
-obj.name = "gitlab"
+obj.name = "gitlab-merge-requests"
 obj.version = "1.0"
 obj.author = "Pavel Makhov"
-obj.homepage = "https://github.com/fork-my-spoons/gitlab.spoon"
+obj.homepage = "https://github.com/fork-my-spoons/gitlab-merge-requests.spoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
 
 obj.indicator = nil
