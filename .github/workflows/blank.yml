@@ -14,12 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Zip Folder
-        run: zip -r ${{ github.workspace }}.zip . -x ".git/*" ".github/* ${{ github.workspace }}.zip"
+        run: zip -r ${{ github.event.repository.name }}.zip . -x ".git/*" ".github/* ${{ github.event.repository.name }}.zip"
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add ${{ github.workspace }}.zip
+          git add ${{ github.event.repository.name }}.zip
           git commit -m "Release" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
