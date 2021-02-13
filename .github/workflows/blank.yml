@@ -1,4 +1,4 @@
-name: Zip Files
+.name: Zip Files
 
 on:
   # Triggers the workflow on push or pull request events but only for the master branch
@@ -14,12 +14,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Zip Folder
-        run: zip -r ${{ GITHUB_WORKSPACE }}.zip . -x ".git/*" ".github/* ${{ GITHUB_WORKSPACE }}.zip"
+        run: zip -r ${{ env.GITHUB_WORKSPACE }}.zip . -x ".git/*" ".github/* ${{ env.GITHUB_WORKSPACE }}.zip"
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add ${{ GITHUB_WORKSPACE }}.zip
+          git add ${{ env.GITHUB_WORKSPACE }}.zip
           git commit -m "Release" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
