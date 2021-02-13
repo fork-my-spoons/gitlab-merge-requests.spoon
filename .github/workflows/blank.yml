@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Delete old release
+        run: "rm -f ${{ github.event.repository.name }}.zip"
       - name: Zip Folder
         run: zip -r ${{ github.event.repository.name }}.zip . -x ".git/*" ".github/* ${{ github.event.repository.name }}.zip"
       - name: Commit files
