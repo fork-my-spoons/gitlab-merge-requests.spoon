@@ -11,7 +11,7 @@ and shows merge requests for you to review and assigned to you.
 # Installation
 
  - download and install [Hammerspoon](https://github.com/Hammerspoon/hammerspoon/releases/latest)
- - download and install [GitLab Spoon]()
+ - download and install [gitLab-merge-requests.spoon](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/raw/master/gitlab-merge-requests.spoon.zip)
  - open ~/.hammerspoon/init.lua and add following snippet:
 
 ```lua
