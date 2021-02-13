@@ -13,14 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: papeloto/action-zip@v1
-        with:
-          dest: result.zip
+      - name: Zip Folder
+        run: zip -r ${{ GITHUB_WORKSPACE }}.zip . -x ".git/*" ".github/* ${{ GITHUB_WORKSPACE }}.zip"
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add result.zip
+          git add ${{ GITHUB_WORKSPACE }}.zip
           git commit -m "Release" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
