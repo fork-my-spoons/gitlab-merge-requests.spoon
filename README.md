@@ -16,13 +16,12 @@ and shows merge requests for you to review and assigned to you.
 
 ```lua
 -- GitLab
-hs.loadSpoon("Gitlab")
-spoon.Gitlab:setup({
+hs.loadSpoon('gitlab-merge-requests')
+spoon['gitlab-merge-requests']:setup({
     gitlab_host = 'https://gitlab.com',
     token = 'your_token',
-    username = 'gitlab_username'
+    username = 'gitlab_username' 
 })
-spoon.Gitlab:start()
 ```
 
 To generate a token, go to: https://gitlab.com/-/profile/personal_access_tokens, select **api** scope and type a name.
