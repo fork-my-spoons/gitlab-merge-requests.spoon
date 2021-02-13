@@ -19,7 +19,8 @@ and shows merge requests for you to review and assigned to you.
 hs.loadSpoon("Gitlab")
 spoon.Gitlab:setup({
     gitlab_host = 'https://gitlab.com',
-    token = '<your token>'
+    token = 'your_token',
+    username = 'gitlab_username'
 })
 spoon.Gitlab:start()
 ```

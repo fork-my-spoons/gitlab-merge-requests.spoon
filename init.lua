@@ -11,7 +11,7 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.indicator = nil
 obj.timer = nil
 obj.gitlab_host = nil
-obj.path = 'state=opened&scope=all'
+obj.path = 'state=opened&scope=all&reviewer_username='
 obj.token = nil
 obj.toReview = {}
 obj.assignedToYou = {}
@@ -167,6 +167,7 @@ end
 function obj:setup(args)
     self.gitlab_host = args.gitlab_host
     self.token = args.token
+    self.path = self.path .. args.username
 end
 
 function obj:start()
