@@ -16,6 +16,12 @@ jobs:
       - uses: papeloto/action-zip@v1
         with:
           dest: result.zip
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add result.zip
+          git commit -m "Release" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
