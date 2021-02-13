@@ -1,5 +1,7 @@
 # GitLab 
 
+![build](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/workflows/build/badge.svg)
+
 ![screenshot2](./screenshots/screenshot.png)
 
 This menuabar app replicates GitLab's merge requests panel dropdown:
