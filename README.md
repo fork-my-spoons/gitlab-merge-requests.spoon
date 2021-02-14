@@ -2,19 +2,27 @@
 
 ![build](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/workflows/build/badge.svg)
 
+A menu bar app, showing a list of merge requests assigned to a user to review:
+
 ![screenshot2](./screenshots/screenshot.png)
 
-This menuabar app replicates GitLab's merge requests panel dropdown:
+Each item in the list is showing following information:
 
-![screenshot1](./screenshots/gitlab_mrs.png)
-
-and shows merge requests for you to review and assigned to you.
+![details](./screenshots/details.png)
 
 # Installation
 
- - download and install [Hammerspoon](https://github.com/Hammerspoon/hammerspoon/releases/latest)
- - download and install [gitLab-merge-requests.spoon](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/raw/master/gitlab-merge-requests.spoon.zip)
- - open ~/.hammerspoon/init.lua and add following snippet:
+ - install [Hammerspoon](http://www.hammerspoon.org/) - a powerfull automation tool for OS X
+   - Manually:
+
+      Download the [latest release], and drag Hammerspoon.app from your Downloads folder to Applications.
+   - Homebrew:
+
+      ```brew install hammerspoon --cask```
+
+ - download [gitLab-merge-requests.spoon](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/raw/master/gitlab-merge-requests.spoon.zip), unzip and double click on a .spoon file. It will be installed under `~/.hammerspoon/Spoons` folder.
+ 
+ - open ~/.hammerspoon/init.lua and add the following snippet, adding your parameters:
 
 ```lua
 -- GitLab
