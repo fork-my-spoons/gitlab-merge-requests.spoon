@@ -22,8 +22,9 @@ local comment_icon = hs.styledtext.new(' ', { font = {name = 'feather', size 
 local user_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 local calendar_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 local warning_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#ffd60a'}})
+local checkbox_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 
-local function styledText(text)
+local function subtitle(text)
     return hs.styledtext.new(text, {color = {hex = '#8e8e8e'}})
 end
 
@@ -73,9 +74,10 @@ local function updateMenu()
                 local approvals = hs.json.decode(body)
 
                 local title = hs.styledtext.new(merge_request.title .. '\n') 
-                        .. calendar_icon .. styledText(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
-                        .. comment_icon .. styledText(tostring(merge_request.user_notes_count) .. '   ')
-                        .. user_icon .. styledText(merge_request.author.name)
+                        .. comment_icon .. subtitle(tostring(merge_request.user_notes_count) .. '   ')
+                        .. checkbox_icon .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
+                        .. calendar_icon .. subtitle(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
+                        .. user_icon .. subtitle(merge_request.author.name)
 
                 if merge_request.merge_status == 'cannot_be_merged' then
                     title = warning_icon .. title
@@ -102,9 +104,10 @@ local function updateMenu()
                     local approvals = hs.json.decode(body)
 
                     local title = hs.styledtext.new(merge_request.title .. '\n') 
-                        .. calendar_icon .. styledText(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
-                        .. comment_icon .. styledText(tostring(merge_request.user_notes_count) .. '   ')
-                        .. user_icon .. styledText(merge_request.author.name)
+                        .. comment_icon .. subtitle(tostring(merge_request.user_notes_count) .. '   ')
+                        .. checkbox_icon .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
+                        .. calendar_icon .. subtitle(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
+                        .. user_icon .. subtitle(merge_request.author.name)
 
                     if merge_request.merge_status == 'cannot_be_merged' then
                         title = warning_icon .. title
