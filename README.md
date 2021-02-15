@@ -20,7 +20,7 @@ Each item in the list is showing following information:
 
       ```brew install hammerspoon --cask```
 
- - download [gitLab-merge-requests.spoon](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/raw/master/gitlab-merge-requests.spoon.zip), unzip and double click on a .spoon file. It will be installed under `~/.hammerspoon/Spoons` folder.
+ - download [gitlab-merge-requests.spoon](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/raw/master/gitlab-merge-requests.spoon.zip), unzip and double click on a .spoon file. It will be installed under `~/.hammerspoon/Spoons` folder.
  
  - open ~/.hammerspoon/init.lua and add the following snippet, adding your parameters:
 
