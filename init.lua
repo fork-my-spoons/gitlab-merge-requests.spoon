@@ -11,10 +11,12 @@ obj.license = "MIT - https://opensource.org/licenses/MIT"
 obj.indicator = nil
 obj.timer = nil
 obj.gitlab_host = nil
-obj.path = 'state=opened&scope=all&reviewer_username='
 obj.token = nil
+obj.username = nil
 obj.toReview = {}
 obj.assignedToYou = {}
+obj.mrUrl = '%s/api/v4/merge_requests?state=opened&scope=all&%s'
+obj.approvalsUrl = '%s/api/v4/projects/%s/merge_requests/%s/approval_state'
 
 obj.iconPath = hs.spoons.resourcePath("icons")
 
@@ -23,6 +25,7 @@ local user_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 1
 local calendar_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 local warning_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#ffd60a'}})
 local checkbox_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
+local checkbox_icon_green = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#7CB342'}})
 
 local function subtitle(text)
     return hs.styledtext.new(text, {color = {hex = '#8e8e8e'}})
@@ -59,23 +62,31 @@ end
 
 
 local function updateMenu()
-    local gitlab_url = obj.gitlab_host .. '/api/v4/merge_requests?' .. hs.http.convertHtmlEntities(obj.path)
+    local toReviewUrl = string.format(obj.mrUrl, obj.gitlab_host, 'reviewer_username=' .. hs.http.convertHtmlEntities(obj.username))
     local auth_header = {}
     auth_header['PRIVATE-TOKEN'] = obj.token
     local current_time = os.time(os.date("!*t"))
 
-    hs.http.asyncGet(gitlab_url, auth_header, function(status, body) 
+    hs.http.asyncGet(toReviewUrl, auth_header, function(status, body) 
         obj.toReview = {}
         local merge_requests = hs.json.decode(body)
         local to_review = #merge_requests
     
         for _, merge_request in ipairs(merge_requests) do
-            hs.http.asyncGet(obj.gitlab_host .. '/api/v4/projects/' .. merge_request.project_id .. '/merge_requests/' .. merge_request.iid ..'/approval_state', auth_header, function(code, body) 
+            hs.http.asyncGet(string.format(obj.approvalsUrl, obj.gitlab_host, merge_request.project_id, merge_request.iid), auth_header, function(code, body) 
                 local approvals = hs.json.decode(body)
 
+                local isApprovedByMe = false
+
+                for _, approver in ipairs(approvals.rules[1].approved_by) do
+                    if approver.username == obj.username then
+                        isApprovedByMe = true
+                    end
+                end
+                
                 local title = hs.styledtext.new(merge_request.title .. '\n') 
                         .. comment_icon .. subtitle(tostring(merge_request.user_notes_count) .. '   ')
-                        .. checkbox_icon .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
+                        .. (isApprovedByMe and checkbox_icon_green or checkbox_icon) .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
                         .. calendar_icon .. subtitle(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
                         .. user_icon .. subtitle(merge_request.author.name)
 
@@ -94,18 +105,27 @@ local function updateMenu()
             end)
         end
 
-        hs.http.asyncGet(obj.gitlab_host .. '/api/v4/merge_requests?state=opened', auth_header, function(status, body)
+        local assignedToMeUrl = string.format(obj.mrUrl, obj.gitlab_host, 'assignee_username=' .. hs.http.convertHtmlEntities(obj.username))
+        hs.http.asyncGet(assignedToMeUrl, auth_header, function(status, body)
             obj.assignedToYou = {}
             local merge_requests = hs.json.decode(body)
             obj.indicator:setTitle(#merge_requests + to_review)
         
             for _, merge_request in ipairs(merge_requests) do
-                hs.http.asyncGet(obj.gitlab_host .. '/api/v4/projects/' .. merge_request.project_id .. '/merge_requests/' .. merge_request.iid ..'/approval_state', auth_header, function(code, body) 
+                hs.http.asyncGet(string.format(obj.approvalsUrl, obj.gitlab_host, merge_request.project_id, merge_request.iid), auth_header, function(code, body) 
                     local approvals = hs.json.decode(body)
+
+                    local isApprovedByMe = false
+
+                    for _, approver in ipairs(approvals.rules[1].approved_by) do
+                        if approver.username == obj.username then
+                            isApprovedByMe = true
+                        end
+                    end
 
                     local title = hs.styledtext.new(merge_request.title .. '\n') 
                         .. comment_icon .. subtitle(tostring(merge_request.user_notes_count) .. '   ')
-                        .. checkbox_icon .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
+                        .. (isApprovedByMe and checkbox_icon_green or checkbox_icon) .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
                         .. calendar_icon .. subtitle(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
                         .. user_icon .. subtitle(merge_request.author.name)
 
@@ -170,7 +190,7 @@ end
 function obj:setup(args)
     self.gitlab_host = args.gitlab_host
     self.token = args.token
-    self.path = self.path .. args.username
+    self.username = args.username
 end
 
 function obj:start()
