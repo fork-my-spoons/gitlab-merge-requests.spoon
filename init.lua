@@ -94,7 +94,7 @@ local function updateMenu()
                     title = warning_icon .. title
                 end
 
-                menu_item = { 
+                local menu_item = { 
                     created = parse_date(merge_request.created_at),
                     title = title,
                     image = hs.image.imageFromURL(merge_request.author.avatar_url):setSize({w=32,h=32}),
