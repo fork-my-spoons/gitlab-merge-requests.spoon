@@ -1,17 +1,12 @@
 # GitLab 
 
-![build](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/workflows/build/badge.svg)
-
 <p align="center">
   <a href="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/actions">
-    <img alt="Build" src="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/workflows/build/badge.svg">
-  </a>
+    <img alt="Build" src="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/workflows/build/badge.svg"/></a>
   <a href="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/issues">
-    <img alt="GitHub issues" src="https://img.shields.io/github/issues/fork-my-spoons/gitlab-merge-requests.spoon">
-  </a>
+    <img alt="GitHub issues" src="https://img.shields.io/github/issues/fork-my-spoons/gitlab-merge-requests.spoon"/></a>
   <a href="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/releases">
-    <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/fork-my-spoons/gitlab-merge-requests.spoon/total">
-  </a>
+    <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/fork-my-spoons/gitlab-merge-requests.spoon/total"/></a>
 </p>
 
 A menu bar app, showing a list of merge requests assigned to a user to review:
