@@ -11,11 +11,15 @@
 
 A menu bar app, showing a list of merge requests assigned to a user to review:
 
-![screenshot2](./screenshots/screenshot.png)
+<p align="center">
+  <img src="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/raw/master/screenshots/screenshot.png"/>
+</p>
 
 Each item in the list is showing following information:
 
-![details](./screenshots/details.png)
+<p align="center">
+  <img src="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/raw/master/screenshots/details.png"/>
+</p>
 
 # Installation
 
