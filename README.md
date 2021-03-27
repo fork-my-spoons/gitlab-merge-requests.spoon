@@ -1,4 +1,4 @@
-# GitLab 
+# GitLab Merge Requests
 
 <p align="center">
   <a href="https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/actions">
