@@ -31,7 +31,7 @@ Each item in the list is showing following information:
 
       ```brew install hammerspoon --cask```
 
- - download [gitlab-merge-requests.spoon](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/releases/download/v1.0/gitlab-merge-requests.spoon.zip), unzip and double click on a .spoon file. It will be installed under `~/.hammerspoon/Spoons` folder.
+ - download [gitlab-merge-requests.spoon](https://github.com/fork-my-spoons/gitlab-merge-requests.spoon/releases/latest/download/gitlab-merge-requests.spoon.zip), unzip and double click on a .spoon file. It will be installed under `~/.hammerspoon/Spoons` folder.
  
  - open ~/.hammerspoon/init.lua and add the following snippet, adding your parameters:
 
