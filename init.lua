@@ -2,8 +2,8 @@ local obj = {}
 obj.__index = obj
 
 -- Metadata
-obj.name = "gitlab-merge-requests"
-obj.version = "1.0"
+obj.name = "gitlab-merge-requests.spoon"
+obj.version = "1.1"
 obj.author = "Pavel Makhov"
 obj.homepage = "https://github.com/fork-my-spoons/gitlab-merge-requests.spoon"
 obj.license = "MIT - https://opensource.org/licenses/MIT"
@@ -26,6 +26,7 @@ local calendar_icon = hs.styledtext.new(' ', { font = {name = 'feather', size
 local warning_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#ffd60a'}})
 local checkbox_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 local checkbox_icon_green = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#7CB342'}})
+local project_icon = hs.styledtext.new(' ', { font = {name = 'feather', size = 12 }, color = {hex = '#8e8e8e'}})
 
 local function subtitle(text)
     return hs.styledtext.new(text, {color = {hex = '#8e8e8e'}})
@@ -60,6 +61,61 @@ local function to_time_ago(seconds)
     end
 end
 
+local function check_for_updates(spoon_name, spoon_version)
+    local release_url = 'https://api.github.com/repos/fork-my-spoons/' .. spoon_name .. '/releases/latest'
+    hs.http.asyncGet(release_url, {}, function(status, body)
+        local latest_release = hs.json.decode(body)
+        latest = latest_release.tag_name:sub(2)
+        
+        if latest == spoon_version then
+            hs.notify.new(function() end, {
+                autoWithdraw = false,
+                title = 'Gitlab Merge Requests Spoon',
+                informativeText = "You have the latest version installed!"
+            }):send()
+        else
+            hs.notify.new(function() 
+                os.execute('open ' .. latest_release.assets[1].browser_download_url)
+            end, 
+            {
+                title = 'Gitlab Merge Requests Spoon',
+                informativeText = "New version is available",
+                actionButtonTitle = "Download",
+                hasActionButton = true
+            }):send()
+        end
+    end)
+end
+
+local function build_menu_item(merge_request, approvals, current_time)
+    local isApprovedByMe = false
+
+    for _, approver in ipairs(approvals.rules[1].approved_by) do
+        if approver.username == obj.username then
+            isApprovedByMe = true
+        end
+    end
+    
+    local _,_,project = string.find(merge_request.references.full, "/([%w-]+)!")
+
+    local title = hs.styledtext.new(merge_request.title .. '\n') 
+            .. project_icon .. subtitle(project .. '   ') .. user_icon .. subtitle(merge_request.author.name .. '\n')
+            .. comment_icon .. subtitle(tostring(merge_request.user_notes_count) .. '   ')
+            .. (isApprovedByMe and checkbox_icon_green or checkbox_icon) .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
+            .. calendar_icon .. subtitle(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))))
+
+    if merge_request.merge_status == 'cannot_be_merged' then
+        title = warning_icon .. title
+    end
+
+    return { 
+        created = parse_date(merge_request.created_at),
+        title = title,
+        image = hs.image.imageFromURL(merge_request.author.avatar_url):setSize({w=36,h=36}),
+        checked = #approvals.rules[1].approved_by >= approvals.rules[1].approvals_required,
+        fn = function() os.execute('open ' .. merge_request.web_url) end
+    }
+end
 
 local function updateMenu()
     local toReviewUrl = string.format(obj.mrUrl, obj.gitlab_host, 'reviewer_username=' .. hs.http.convertHtmlEntities(obj.username))
@@ -75,32 +131,8 @@ local function updateMenu()
         for _, merge_request in ipairs(merge_requests) do
             hs.http.asyncGet(string.format(obj.approvalsUrl, obj.gitlab_host, merge_request.project_id, merge_request.iid), auth_header, function(code, body) 
                 local approvals = hs.json.decode(body)
-
-                local isApprovedByMe = false
-
-                for _, approver in ipairs(approvals.rules[1].approved_by) do
-                    if approver.username == obj.username then
-                        isApprovedByMe = true
-                    end
-                end
-                
-                local title = hs.styledtext.new(merge_request.title .. '\n') 
-                        .. comment_icon .. subtitle(tostring(merge_request.user_notes_count) .. '   ')
-                        .. (isApprovedByMe and checkbox_icon_green or checkbox_icon) .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
-                        .. calendar_icon .. subtitle(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
-                        .. user_icon .. subtitle(merge_request.author.name)
-
-                if merge_request.merge_status == 'cannot_be_merged' then
-                    title = warning_icon .. title
-                end
-
-                local menu_item = { 
-                    created = parse_date(merge_request.created_at),
-                    title = title,
-                    image = hs.image.imageFromURL(merge_request.author.avatar_url):setSize({w=32,h=32}),
-                    checked = #approvals.rules[1].approved_by >= approvals.rules[1].approvals_required,
-                    fn = function() os.execute('open ' .. merge_request.web_url) end
-                }
+                local menu_item = build_menu_item(merge_request, approvals, current_time)
+               
                 table.insert(obj.toReview, menu_item)
             end)
         end
@@ -114,32 +146,7 @@ local function updateMenu()
             for _, merge_request in ipairs(merge_requests) do
                 hs.http.asyncGet(string.format(obj.approvalsUrl, obj.gitlab_host, merge_request.project_id, merge_request.iid), auth_header, function(code, body) 
                     local approvals = hs.json.decode(body)
-
-                    local isApprovedByMe = false
-
-                    for _, approver in ipairs(approvals.rules[1].approved_by) do
-                        if approver.username == obj.username then
-                            isApprovedByMe = true
-                        end
-                    end
-
-                    local title = hs.styledtext.new(merge_request.title .. '\n') 
-                        .. comment_icon .. subtitle(tostring(merge_request.user_notes_count) .. '   ')
-                        .. (isApprovedByMe and checkbox_icon_green or checkbox_icon) .. subtitle(#approvals.rules[1].approved_by .. '/' .. approvals.rules[1].approvals_required .. '   ')
-                        .. calendar_icon .. subtitle(to_time_ago(os.difftime(current_time, parse_date(merge_request.created_at))) .. '   ')
-                        .. user_icon .. subtitle(merge_request.author.name)
-
-                    if merge_request.merge_status == 'cannot_be_merged' then
-                        title = warning_icon .. title
-                    end
-
-                    local menu_item = {
-                        created = parse_date(merge_request.created_at),
-                        title = title,
-                        image = hs.image.imageFromURL(merge_request.author.avatar_url):setSize({w=32,h=32}),
-                        checked = #approvals.rules[1].approved_by >= approvals.rules[1].approvals_required,
-                        fn = function() os.execute('open ' .. merge_request.web_url) end
-                    }
+                    local menu_item = build_menu_item(merge_request, approvals, current_time)
                 
                     table.insert(obj.assignedToYou, menu_item)
                 end)
@@ -174,10 +181,19 @@ function obj:buildMenu()
         table.insert(gitlab_menu, { title = '-'})
     end
 
-    table.insert(gitlab_menu, { title = 'Refresh', fn = function() updateMenu() end})
+    table.insert(gitlab_menu, { 
+        image = hs.image.imageFromName('NSRefreshTemplate'), 
+        title = 'Refresh', fn = function() updateMenu() end
+    })
+
+    table.insert(gitlab_menu, { 
+        image = hs.image.imageFromName('NSTouchBarDownloadTemplate'), 
+        title = 'Check for updates', 
+        fn = function() check_for_updates(obj.name, obj.version) end})
 
     return gitlab_menu
 end
+
 
 function obj:init()
     self.indicator = hs.menubar.new()
@@ -194,7 +210,6 @@ function obj:setup(args)
 end
 
 function obj:start()
-    print('started')
     self.timer:fire()
     self.timer:start()
 end

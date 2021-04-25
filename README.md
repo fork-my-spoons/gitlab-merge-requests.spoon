@@ -26,7 +26,7 @@ Each item in the list is showing following information:
  - install [Hammerspoon](http://www.hammerspoon.org/) - a powerfull automation tool for OS X
    - Manually:
 
-      Download the [latest release], and drag Hammerspoon.app from your Downloads folder to Applications.
+      Download the [latest release](https://github.com/Hammerspoon/hammerspoon/releases/latest), and drag Hammerspoon.app from your Downloads folder to Applications.
    - Homebrew:
 
       ```brew install hammerspoon --cask```
