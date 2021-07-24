@@ -2,7 +2,7 @@ local obj = {}
 obj.__index = obj
 
 -- Metadata
-obj.name = "gitlab-merge-requests.spoon"
+obj.name = "Gitlb Merge Requests"
 obj.version = "1.1"
 obj.author = "Pavel Makhov"
 obj.homepage = "https://github.com/fork-my-spoons/gitlab-merge-requests.spoon"
@@ -61,13 +61,13 @@ local function to_time_ago(seconds)
     end
 end
 
-local function check_for_updates(spoon_name, spoon_version)
-    local release_url = 'https://api.github.com/repos/fork-my-spoons/' .. spoon_name .. '/releases/latest'
+function obj:check_for_updates()
+    local release_url = 'https://api.github.com/repos/fork-my-spoons/gitlab-merge-requests.spoon/releases/latest'
     hs.http.asyncGet(release_url, {}, function(status, body)
         local latest_release = hs.json.decode(body)
         latest = latest_release.tag_name:sub(2)
         
-        if latest == spoon_version then
+        if latest == obj.version then
             hs.notify.new(function() end, {
                 autoWithdraw = false,
                 title = 'Gitlab Merge Requests Spoon',
@@ -189,7 +189,7 @@ function obj:buildMenu()
     table.insert(gitlab_menu, { 
         image = hs.image.imageFromName('NSTouchBarDownloadTemplate'), 
         title = 'Check for updates', 
-        fn = function() check_for_updates(obj.name, obj.version) end})
+        fn = function() obj:check_for_updates() end})
 
     return gitlab_menu
 end
